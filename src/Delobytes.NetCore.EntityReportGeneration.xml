@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Delobytes.NetCore.EntityReportGeneration</name>
+    </assembly>
+    <members>
+        <member name="T:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator">
+            <summary>
+            Генератор отчёта о содержимом свойств объектов.
+            todo: добавить работу с потоком для вывода больших файлов с экономией памяти.
+            </summary>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.#ctor(Microsoft.Extensions.Options.IOptions{Delobytes.NetCore.EntityReportGeneration.EntityReportGeneratorOptions},Microsoft.Extensions.Logging.ILogger{Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator})">
+            <summary>
+            Конструктор.
+            </summary>
+            <param name="options">Настройки генератора.</param>
+            <param name="logger">Логировщик.</param>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContent``1(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{``0}})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
+            Метод подходит для экспорта объектов определённых в виде класса.
+            </summary>
+            <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContent(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{System.Collections.Generic.IDictionary{System.String,System.Object}}})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
+            Метод подходит для экспорта динамически создаваемых объектов типа ExpandoObject.
+            </summary>
+            <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContentDirect``1(System.String,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для одной страницы без использования
+            промежуточного преобразования к таблице.
+            Метод подходит для экспорта объектов определённых в виде класса.
+            </summary>
+            <typeparam name="T">Тип объекта.</typeparam>
+            <param name="sheetName">Название страницы.</param>
+            <param name="dataset">Список объектов.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateCsvContent``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Сгенерировать содержимое csv-файла для объектов определённых в виде класса.
+            </summary>
+            <param name="dataset">Набор объектов.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="T:Delobytes.NetCore.EntityReportGeneration.EntityReportGeneratorOptions">
+            <summary>
+            Настройки генератора.
+            </summary>
+        </member>
+        <member name="P:Delobytes.NetCore.EntityReportGeneration.EntityReportGeneratorOptions.CsvDelimiter">
+            <summary>
+            Символ-разделитель для вывода в CSV. 
+            </summary>
+        </member>
+        <member name="T:Delobytes.NetCore.EntityReportGeneration.EntityReportIgnoreAttribute">
+            <summary>
+            Атрибут показывает, что свойство должно быть проигнорировано.
+            </summary>
+            <seealso cref="T:System.Attribute" />
+        </member>
+        <member name="T:Delobytes.NetCore.EntityReportGeneration.IEntityReportGenerator">
+            <summary>
+            Генератор отчёта о содержимом свойств объектов.
+            </summary>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.IEntityReportGenerator.GenerateExcelContent``1(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{``0}})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия
+            и ряда строк.
+            Метод подходит для экспорта объектов определённых в виде класса.
+            </summary>
+            <param name="pagesDataset">Набор объектов для преобразования в страницы файла</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.IEntityReportGenerator.GenerateExcelContent(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{System.Collections.Generic.IDictionary{System.String,System.Object}}})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия
+            и ряда строк.
+            Метод подходит для экспорта динамически создаваемых объектов типа ExpandoObject.
+            </summary>
+            <param name="pagesDataset">Набор объектов для преобразования в страницы файла</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.IEntityReportGenerator.GenerateExcelContentDirect``1(System.String,System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Сгенерировать содержимое эксель-файла для одной страницы без использования
+            промежуточного преобразования к таблице.
+            Метод подходит для экспорта объектов определённых в виде класса.
+            </summary>
+            <typeparam name="T">Тип.</typeparam>
+            <param name="sheetName">Название страницы.</param>
+            <param name="dataset">Список объектов.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.IEntityReportGenerator.GenerateCsvContent``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Сгенерировать содержимое csv-файла для объектов определённых в виде класса.
+            </summary>
+            <param name="dataset">Набор объектов.</param>
+            <returns>Содержимое файла.</returns>
+        </member>
+        <member name="T:Delobytes.NetCore.EntityReportGeneration.ServiceCollectionExtensions">
+            <summary>
+            Расширения коллеции сервисов.
+            </summary>
+        </member>
+        <member name="M:Delobytes.NetCore.EntityReportGeneration.ServiceCollectionExtensions.AddEntityReportGenerator(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.Action{Delobytes.NetCore.EntityReportGeneration.EntityReportGeneratorOptions})">
+            <summary>
+            Добавляет генератор отчётов сущностей. Генератор создаёт файл с содержимым всех свойств сущностей,
+            кроме тех, которые имеют атрибут <see cref="T:Delobytes.NetCore.EntityReportGeneration.EntityReportIgnoreAttribute"/>.
+            </summary>
+            <param name="services">Коллеция сервисов.</param>
+            <param name="configure">Настройки.</param>
+            <returns>Коллеция сервисов.</returns>
+        </member>
+    </members>
+</doc>

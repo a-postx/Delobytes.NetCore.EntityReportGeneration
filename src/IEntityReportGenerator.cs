@@ -1,14 +1,10 @@
 namespace Delobytes.NetCore.EntityReportGeneration;
 
+/// <summary>
+/// Генератор отчёта о содержимом свойств объектов.
+/// </summary>
 public interface IEntityReportGenerator
 {
-    /// <summary>
-    /// Сгенерировать содержимое csv-файла для объектов определённых в виде класса.
-    /// </summary>
-    /// <param name="dataset">Набор объектов.</param>
-    /// <returns>Содержимое файла.</returns>
-    string GenerateCsvContent<T>(IEnumerable<T> dataset) where T : class;
-
     /// <summary>
     /// Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия
     /// и ряда строк.
@@ -35,4 +31,10 @@ public interface IEntityReportGenerator
     /// <param name="dataset">Список объектов.</param>
     /// <returns>Содержимое файла.</returns>
     byte[] GenerateExcelContentDirect<T>(string sheetName, IEnumerable<T> dataset) where T : class;
+    /// <summary>
+    /// Сгенерировать содержимое csv-файла для объектов определённых в виде класса.
+    /// </summary>
+    /// <param name="dataset">Набор объектов.</param>
+    /// <returns>Содержимое файла.</returns>
+    string GenerateCsvContent<T>(IEnumerable<T> dataset) where T : class;
 }

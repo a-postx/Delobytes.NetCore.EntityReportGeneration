@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Delobytes.NetCore.EntityReportGeneration;
 
-public static class DataTableExtensions
+internal static class DataTableExtensions
 {
     public static string ToCSV(this DataTable dataTable, string delimiter)
     {

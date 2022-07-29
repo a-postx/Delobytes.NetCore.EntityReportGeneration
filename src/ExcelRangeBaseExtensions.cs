@@ -3,7 +3,7 @@ using OfficeOpenXml;
 
 namespace Delobytes.NetCore.EntityReportGeneration;
 
-public static class ExcelRangeBaseExtensions
+internal static class ExcelRangeBaseExtensions
 {
     public static ExcelRangeBase LoadFromCollectionFiltered<T>(this ExcelRangeBase @this, IEnumerable<T> collection, bool printHeaders = true) where T : class
     {

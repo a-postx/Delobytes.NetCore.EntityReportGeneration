@@ -2,6 +2,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Delobytes.NetCore.EntityReportGeneration;
 
+/// <summary>
+/// Расширения коллеции сервисов.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
     /// <summary>

@@ -4,9 +4,9 @@ using OfficeOpenXml.Table;
 
 namespace Delobytes.NetCore.EntityReportGeneration;
 
-public class ExcelFile : IDisposable
+internal class ExcelFile : IDisposable
 {
-    public ExcelFile()
+    internal ExcelFile()
     {
         _package = new ExcelPackage();
     }
@@ -17,22 +17,22 @@ public class ExcelFile : IDisposable
     protected IList<ExcelWorksheet> WorkSheets { get; } = new List<ExcelWorksheet>();
 
 
-    public void SetAuthor(string author)
+    internal void SetAuthor(string author)
     {
         _package.Workbook.Properties.Author = author;
     }
 
-    public void SetSubject(string subject)
+    internal void SetSubject(string subject)
     {
         _package.Workbook.Properties.Subject = subject;
     }
 
-    public void SetCompany(string company)
+    internal void SetCompany(string company)
     {
         _package.Workbook.Properties.Company = company;
     }
 
-    public void AddWorkSheet(string name, DataTable table, bool printHeaders = true, int rowHeight = 15, int columnWidth = 12)
+    internal void AddWorkSheet(string name, DataTable table, bool printHeaders = true, int rowHeight = 15, int columnWidth = 12)
     {
         ExcelWorksheet worksheet = _package.Workbook.Worksheets.Add(name);
         WorkSheets.Add(worksheet);
@@ -43,7 +43,7 @@ public class ExcelFile : IDisposable
         worksheet.Cells["A1"].LoadFromDataTable(table, printHeaders, TableStyles.None);
     }
 
-    public void AddWorkSheet<T>(string name, IEnumerable<T> collection, bool printHeaders = true, int rowHeight = 15, int columnWidth = 12) where T : class
+    internal void AddWorkSheet<T>(string name, IEnumerable<T> collection, bool printHeaders = true, int rowHeight = 15, int columnWidth = 12) where T : class
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(collection);
@@ -57,7 +57,7 @@ public class ExcelFile : IDisposable
         worksheet.Cells["A1"].LoadFromCollectionFiltered(collection, printHeaders);
     }
 
-    public void AddWorkSheet(string name, IEnumerable<IDictionary<string, object>> valueDics, bool printHeaders = true, bool setAutoFilter = false, int rowHeight = 15, int columnWidth = 12)
+    internal void AddWorkSheet(string name, IEnumerable<IDictionary<string, object>> valueDics, bool printHeaders = true, bool setAutoFilter = false, int rowHeight = 15, int columnWidth = 12)
     {
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(valueDics);
@@ -105,7 +105,7 @@ public class ExcelFile : IDisposable
         }
     }
 
-    public byte[] GetContent()
+    internal byte[] GetContent()
     {
         byte[] result = _package.GetAsByteArray();
         return result;

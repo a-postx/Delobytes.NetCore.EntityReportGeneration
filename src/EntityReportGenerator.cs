@@ -7,8 +7,17 @@ using Microsoft.Extensions.Options;
 
 namespace Delobytes.NetCore.EntityReportGeneration;
 
+/// <summary>
+/// Генератор отчёта о содержимом свойств объектов.
+/// todo: добавить работу с потоком для вывода больших файлов с экономией памяти.
+/// </summary>
 public class EntityReportGenerator : IEntityReportGenerator
 {
+    /// <summary>
+    /// Конструктор.
+    /// </summary>
+    /// <param name="options">Настройки генератора.</param>
+    /// <param name="logger">Логировщик.</param>
     public EntityReportGenerator(IOptions<EntityReportGeneratorOptions> options,
         ILogger<EntityReportGenerator> logger = null)
     {
@@ -78,6 +87,12 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
+    /// <summary>
+    /// Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
+    /// Метод подходит для экспорта объектов определённых в виде класса.
+    /// </summary>
+    /// <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
+    /// <returns>Содержимое файла.</returns>
     public byte[] GenerateExcelContent<T>(IDictionary<string, IEnumerable<T>> pagesDataset) where T : class
     {
         byte[] result = null;
@@ -99,6 +114,12 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
+    /// <summary>
+    /// Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
+    /// Метод подходит для экспорта динамически создаваемых объектов типа ExpandoObject.
+    /// </summary>
+    /// <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
+    /// <returns>Содержимое файла.</returns>
     public byte[] GenerateExcelContent(IDictionary<string, IEnumerable<IDictionary<string, object>>> pagesDataset)
     {
         byte[] result = null;
@@ -117,6 +138,15 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
+    /// <summary>
+    /// Сгенерировать содержимое эксель-файла для одной страницы без использования
+    /// промежуточного преобразования к таблице.
+    /// Метод подходит для экспорта объектов определённых в виде класса.
+    /// </summary>
+    /// <typeparam name="T">Тип объекта.</typeparam>
+    /// <param name="sheetName">Название страницы.</param>
+    /// <param name="dataset">Список объектов.</param>
+    /// <returns>Содержимое файла.</returns>
     public byte[] GenerateExcelContentDirect<T>(string sheetName, IEnumerable<T> dataset) where T : class
     {
         byte[] result = null;
@@ -190,6 +220,11 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
+    /// <summary>
+    /// Сгенерировать содержимое csv-файла для объектов определённых в виде класса.
+    /// </summary>
+    /// <param name="dataset">Набор объектов.</param>
+    /// <returns>Содержимое файла.</returns>
     public string GenerateCsvContent<T>(IEnumerable<T> dataset) where T : class
     {
         string name = typeof(T).GetFriendlyName();
