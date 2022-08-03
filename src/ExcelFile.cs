@@ -34,6 +34,9 @@ internal class ExcelFile : IDisposable
 
     internal void AddWorkSheet(string name, DataTable table, bool printHeaders = true, int rowHeight = 15, int columnWidth = 12)
     {
+        ArgumentNullException.ThrowIfNull(name);
+        ArgumentNullException.ThrowIfNull(table);
+
         ExcelWorksheet worksheet = _package.Workbook.Worksheets.Add(name);
         WorkSheets.Add(worksheet);
 
@@ -99,7 +102,7 @@ internal class ExcelFile : IDisposable
             col = 1;
         }
 
-        if (setAutoFilter)
+        if (setAutoFilter && valueDics.Any())
         {
             worksheet.Cells[worksheet.Dimension.Address].AutoFilter = true;
         }
