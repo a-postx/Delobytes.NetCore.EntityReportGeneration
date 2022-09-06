@@ -5,6 +5,8 @@ VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delobytes.NetCore.EntityReportGeneration", "src\Delobytes.NetCore.EntityReportGeneration.csproj", "{7F7D4BED-32C4-4003-A1A1-6A051D225746}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delobytes.NetCore.EntityReportGeneration.Tests", "test\Delobytes.NetCore.EntityReportGeneration.Tests.csproj", "{B6BF229B-5323-4543-A6D3-41FBC3EE2036}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{7F7D4BED-32C4-4003-A1A1-6A051D225746}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F7D4BED-32C4-4003-A1A1-6A051D225746}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F7D4BED-32C4-4003-A1A1-6A051D225746}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BF229B-5323-4543-A6D3-41FBC3EE2036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BF229B-5323-4543-A6D3-41FBC3EE2036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BF229B-5323-4543-A6D3-41FBC3EE2036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BF229B-5323-4543-A6D3-41FBC3EE2036}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

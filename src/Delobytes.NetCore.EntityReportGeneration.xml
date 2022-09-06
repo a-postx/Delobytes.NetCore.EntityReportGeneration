@@ -18,31 +18,13 @@
             <param name="logger">Логировщик.</param>
         </member>
         <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContent``1(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{``0}})">
-            <summary>
-            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
-            Метод подходит для экспорта объектов определённых в виде класса.
-            </summary>
-            <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
-            <returns>Содержимое файла.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContent(System.Collections.Generic.IDictionary{System.String,System.Collections.Generic.IEnumerable{System.Collections.Generic.IDictionary{System.String,System.Object}}})">
-            <summary>
-            Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
-            Метод подходит для экспорта динамически создаваемых объектов типа ExpandoObject.
-            </summary>
-            <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
-            <returns>Содержимое файла.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateExcelContentDirect``1(System.String,System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Сгенерировать содержимое эксель-файла для одной страницы без использования
-            промежуточного преобразования к таблице.
-            Метод подходит для экспорта объектов определённых в виде класса.
-            </summary>
-            <typeparam name="T">Тип объекта.</typeparam>
-            <param name="sheetName">Название страницы.</param>
-            <param name="dataset">Список объектов.</param>
-            <returns>Содержимое файла.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:Delobytes.NetCore.EntityReportGeneration.EntityReportGenerator.GenerateCsvContent``1(System.Collections.Generic.IEnumerable{``0})">
             <summary>

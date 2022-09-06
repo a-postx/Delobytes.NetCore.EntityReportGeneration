@@ -19,14 +19,14 @@ public class EntityReportGenerator : IEntityReportGenerator
     /// <param name="options">Настройки генератора.</param>
     /// <param name="logger">Логировщик.</param>
     public EntityReportGenerator(IOptions<EntityReportGeneratorOptions> options,
-        ILogger<EntityReportGenerator> logger = null)
+        ILogger<EntityReportGenerator>? logger = null)
     {
         _options = options.Value;
         _log = logger;
     }
 
     private readonly EntityReportGeneratorOptions _options;
-    private readonly ILogger<EntityReportGenerator> _log;
+    private readonly ILogger<EntityReportGenerator>? _log;
 
     private static string RemoveDelimiterChar(string s, string delimiter)
     {
@@ -72,7 +72,8 @@ public class EntityReportGenerator : IEntityReportGenerator
 
                 for (var i = 0; i < properties.Length; i++)
                 {
-                    objectRow[i] = properties[i].GetValue(item, null);
+                    object? objValue = properties[i].GetValue(item, null);
+                    objectRow[i] = objValue ?? string.Empty;
                 }
 
                 result.Rows.Add(objectRow);
@@ -87,15 +88,10 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
-    /// <summary>
-    /// Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
-    /// Метод подходит для экспорта объектов определённых в виде класса.
-    /// </summary>
-    /// <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
-    /// <returns>Содержимое файла.</returns>
+    ///<inheritdoc/>
     public byte[] GenerateExcelContent<T>(IDictionary<string, IEnumerable<T>> pagesDataset) where T : class
     {
-        byte[] result = null;
+        byte[] result;
 
         using (ExcelFile file = new ExcelFile())
         {
@@ -114,15 +110,10 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
-    /// <summary>
-    /// Сгенерировать содержимое эксель-файла для ряда страниц. Страница состоит из названия и ряда строк.
-    /// Метод подходит для экспорта динамически создаваемых объектов типа ExpandoObject.
-    /// </summary>
-    /// <param name="pagesDataset">Набор объектов для преобразования в страницы файла.</param>
-    /// <returns>Содержимое файла.</returns>
+    ///<inheritdoc/>
     public byte[] GenerateExcelContent(IDictionary<string, IEnumerable<IDictionary<string, object>>> pagesDataset)
     {
-        byte[] result = null;
+        byte[] result;
 
         using (ExcelFile file = new ExcelFile())
         {
@@ -138,18 +129,10 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
-    /// <summary>
-    /// Сгенерировать содержимое эксель-файла для одной страницы без использования
-    /// промежуточного преобразования к таблице.
-    /// Метод подходит для экспорта объектов определённых в виде класса.
-    /// </summary>
-    /// <typeparam name="T">Тип объекта.</typeparam>
-    /// <param name="sheetName">Название страницы.</param>
-    /// <param name="dataset">Список объектов.</param>
-    /// <returns>Содержимое файла.</returns>
+    ///<inheritdoc/>
     public byte[] GenerateExcelContentDirect<T>(string sheetName, IEnumerable<T> dataset) where T : class
     {
-        byte[] result = null;
+        byte[] result;
 
         using (ExcelFile file = new ExcelFile())
         {
@@ -189,7 +172,7 @@ public class EntityReportGenerator : IEntityReportGenerator
                 {
                     if (properties[i].PropertyType == typeof(List<string>))
                     {
-                        string stringValue = string.Empty;
+                        string? stringValue = string.Empty;
 
                         if (properties[i].GetValue(item, null) is IEnumerable enumerable)
                         {
@@ -203,7 +186,7 @@ public class EntityReportGenerator : IEntityReportGenerator
                     }
                     else
                     {
-                        object propertyValue = properties[i].GetValue(item, null);
+                        object? propertyValue = properties[i].GetValue(item, null);
                         string cellValue = propertyValue?.ToString() ?? string.Empty;
                         dataRow[i] = string.IsNullOrEmpty(stringToCleanup) ? cellValue : RemoveDelimiterChar(cellValue, stringToCleanup);
                     }

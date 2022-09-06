@@ -73,7 +73,7 @@ internal class ExcelFile : IDisposable
 
         if (printHeaders)
         {
-            IDictionary<string, object> headerObject = valueDics.FirstOrDefault();
+            IDictionary<string, object>? headerObject = valueDics.FirstOrDefault();
 
             if (headerObject is not null)
             {

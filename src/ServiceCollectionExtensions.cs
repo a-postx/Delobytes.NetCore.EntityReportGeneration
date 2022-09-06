@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
     /// <param name="services">Коллеция сервисов.</param>
     /// <param name="configure">Настройки.</param>
     /// <returns>Коллеция сервисов.</returns>
-    public static IServiceCollection AddEntityReportGenerator(this IServiceCollection services, Action<EntityReportGeneratorOptions> configure = null)
+    public static IServiceCollection AddEntityReportGenerator(this IServiceCollection services, Action<EntityReportGeneratorOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
