@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -88,6 +89,12 @@ public class EntityReportGenerator : IEntityReportGenerator
         return result;
     }
 
+    private static string ConvertToString(object? property, string stringToCleanup)
+    {
+        string cellValue = property?.ToString() ?? string.Empty;
+        return string.IsNullOrEmpty(stringToCleanup) ? cellValue : RemoveDelimiterChar(cellValue, stringToCleanup);
+    }
+
     ///<inheritdoc/>
     public byte[] GenerateExcelContent<T>(IDictionary<string, IEnumerable<T>> pagesDataset) where T : class
     {
@@ -170,27 +177,46 @@ public class EntityReportGenerator : IEntityReportGenerator
 
                 for (int i = 0; i < properties.Length; i++)
                 {
-                    if (properties[i].PropertyType == typeof(List<string>))
+                    object? columnValue;
+
+                    Type[]? interfaces = properties[i].PropertyType.GetInterfaces();
+
+                    if (interfaces.Contains(typeof(IEnumerable))
+                        && properties[i].PropertyType.Name != "String"
+                        && _options.DetailedEnumerables)
                     {
-                        string? stringValue = string.Empty;
+                        object? value = properties[i].GetValue(item, null);
+
+                        StringBuilder sb = value is IList list ? new StringBuilder(list.Count) : new StringBuilder();
+                        bool firstElement = true;
 
                         if (properties[i].GetValue(item, null) is IEnumerable enumerable)
                         {
                             foreach (object element in enumerable)
                             {
-                                stringValue = string.IsNullOrEmpty(stringValue) ? element.ToString() : stringValue + "," + element;
+                                if (firstElement)
+                                {
+                                    sb.Append(element.ToString());
+                                    firstElement = false;
+                                }
+                                else
+                                {
+                                    sb.Append(',');
+                                    sb.Append(element);
+                                }
                             }
                         }
 
-                        dataRow[i] = string.IsNullOrEmpty(stringToCleanup) ? stringValue : RemoveDelimiterChar(stringValue, stringToCleanup);
+                        columnValue = sb.ToString();
                     }
                     else
                     {
-                        object? propertyValue = properties[i].GetValue(item, null);
-                        string cellValue = propertyValue?.ToString() ?? string.Empty;
-                        dataRow[i] = string.IsNullOrEmpty(stringToCleanup) ? cellValue : RemoveDelimiterChar(cellValue, stringToCleanup);
+                        columnValue = properties[i].GetValue(item, null);
                     }
+
+                    dataRow[i] = ConvertToString(columnValue, stringToCleanup);
                 }
+
                 result.Rows.Add(dataRow);
             }
         }

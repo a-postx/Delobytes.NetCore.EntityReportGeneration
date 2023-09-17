@@ -1,10 +1,10 @@
 namespace Delobytes.NetCore.EntityReportGeneration.Tests;
 
-public class ObjectWithGenericList
+public class ObjectWithNullableEnumerable
 {
     public int? Id { get; set; }
     public bool? IsDeleted { get; set; }
     public string? Name { get; set; }
-    public Guid? ObjGuid { get; set; }
+    public Guid? GuidProp { get; set; }
     public IEnumerable<string>? Properties { get; set; }
 }

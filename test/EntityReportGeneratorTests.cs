@@ -13,6 +13,11 @@ public class EntityReportGeneratorTests
     {
         options.CsvDelimiter = "`";
     };
+    private static readonly Action<EntityReportGeneratorOptions> DetailedEnumerablesOptions = options =>
+    {
+        options.CsvDelimiter = "`";
+        options.DetailedEnumerables = true;
+    };
 
 
     #region Infrastructure
@@ -33,17 +38,23 @@ public class EntityReportGeneratorTests
         return app.Services.GetRequiredService<IEntityReportGenerator>();
     }
 
-    private List<ObjectWithGenericList> GetGenericListEntities()
+    private IEntityReportGenerator GetDetailedReportGenerator()
+    {
+        WebApplication app = CreateApplication(DetailedEnumerablesOptions);
+        return app.Services.GetRequiredService<IEntityReportGenerator>();
+    }
+
+    private List<ObjectWithNullableList> GetNullableListEntities()
     {
         List<string> strings = new List<string> { "string1", "string2" };
 
         Guid id1 = Guid.NewGuid();
         Guid id2 = Guid.NewGuid();
 
-        ObjectWithGenericList obj1 = new ObjectWithGenericList { Id = 1, IsDeleted = true, Name = "Obj1", ObjGuid = id1, Properties = strings };
-        ObjectWithGenericList obj2 = new ObjectWithGenericList { Id = 2, IsDeleted = false, Name = "Obj2", ObjGuid = id2, Properties = strings };
+        ObjectWithNullableList obj1 = new ObjectWithNullableList { Id = 1, IsDeleted = true, Name = "Obj1", GuidProp = id1, Properties = strings };
+        ObjectWithNullableList obj2 = new ObjectWithNullableList { Id = 2, IsDeleted = false, Name = "Obj2", GuidProp = id2, Properties = strings };
 
-        List<ObjectWithGenericList> entitiesList = new List<ObjectWithGenericList>
+        List<ObjectWithNullableList> entitiesList = new List<ObjectWithNullableList>
         {
             obj1,
             obj2
@@ -52,17 +63,56 @@ public class EntityReportGeneratorTests
         return entitiesList;
     }
 
-    private List<ObjectWithTypedList> GetTypedListEntities()
+    private List<ObjectWithList> GetListEntities()
     {
         List<string> strings = new List<string> { "string1", "string2" };
-
         Guid id1 = Guid.NewGuid();
         Guid id2 = Guid.NewGuid();
 
-        ObjectWithTypedList obj1 = new ObjectWithTypedList { Id = 1, IsDeleted = true, Name = "Obj1", ObjGuid = id1, Properties = strings };
-        ObjectWithTypedList obj2 = new ObjectWithTypedList { Id = 2, IsDeleted = false, Name = "Obj2", ObjGuid = id2, Properties = strings };
+        ObjectWithList obj1 = new ObjectWithList { Id = 1, IsDeleted = true, Name = "Obj1", GuidProp = id1, Properties = strings };
+        ObjectWithList obj2 = new ObjectWithList { Id = 2, IsDeleted = false, Name = "Obj2", GuidProp = id2, Properties = strings };
 
-        List<ObjectWithTypedList> entitiesList = new List<ObjectWithTypedList>
+        List<ObjectWithList> entitiesList = new List<ObjectWithList>
+        {
+            obj1,
+            obj2
+        };
+
+        return entitiesList;
+    }
+
+    private List<ObjectWithEnumerable> GetEnumerableEntities()
+    {
+        string[] strings = new string[2];
+        strings.SetValue("string1", 0);
+        strings.SetValue("string2", 1);
+        Guid id1 = Guid.NewGuid();
+        Guid id2 = Guid.NewGuid();
+
+        ObjectWithEnumerable obj1 = new ObjectWithEnumerable { Id = 1, IsDeleted = true, Name = "Obj1", GuidProp = id1, Properties = strings };
+        ObjectWithEnumerable obj2 = new ObjectWithEnumerable { Id = 2, IsDeleted = false, Name = "Obj2", GuidProp = id2, Properties = strings };
+
+        List<ObjectWithEnumerable> entitiesList = new List<ObjectWithEnumerable>
+        {
+            obj1,
+            obj2
+        };
+
+        return entitiesList;
+    }
+
+    private List<ObjectWithNullableEnumerable> GetNullableEnumerableEntities()
+    {
+        string[] strings = new string[2];
+        strings.SetValue("string1", 0);
+        strings.SetValue("string2", 1);
+        Guid id1 = Guid.NewGuid();
+        Guid id2 = Guid.NewGuid();
+
+        ObjectWithNullableEnumerable obj1 = new ObjectWithNullableEnumerable { Id = 1, IsDeleted = true, Name = "Obj1", GuidProp = id1, Properties = strings };
+        ObjectWithNullableEnumerable obj2 = new ObjectWithNullableEnumerable { Id = 2, IsDeleted = false, Name = "Obj2", GuidProp = id2, Properties = strings };
+
+        List<ObjectWithNullableEnumerable> entitiesList = new List<ObjectWithNullableEnumerable>
         {
             obj1,
             obj2
@@ -92,10 +142,10 @@ public class EntityReportGeneratorTests
     public void EntityReportGenerator_GenerateExcelContentSuccessfully_FromGeneric_WithTwoElements()
     {
         IEntityReportGenerator generator = GetReportGenerator();
-        List<ObjectWithTypedList> entitiesForPage1 = GetTypedListEntities();
-        List<ObjectWithTypedList> entitiesForPage2 = GetTypedListEntities();
+        List<ObjectWithList> entitiesForPage1 = GetListEntities();
+        List<ObjectWithList> entitiesForPage2 = GetListEntities();
 
-        Dictionary<string, IEnumerable<ObjectWithTypedList>> sheets = new Dictionary<string, IEnumerable<ObjectWithTypedList>>
+        Dictionary<string, IEnumerable<ObjectWithList>> sheets = new Dictionary<string, IEnumerable<ObjectWithList>>
         {
             { "page1", entitiesForPage1 },
             { "page2", entitiesForPage2 }
@@ -130,15 +180,15 @@ public class EntityReportGeneratorTests
             sheet.Cells.Value.Should().NotBeNull();
 
             object r0c0Value = ((object[,])sheet.Cells.Value)[0, 0];
-            r0c0Value.Should().Be(nameof(ObjectWithTypedList.Id));
+            r0c0Value.Should().Be(nameof(ObjectWithList.Id));
             object r0c1Value = ((object[,])sheet.Cells.Value)[0, 1];
-            r0c1Value.Should().Be(nameof(ObjectWithTypedList.IsDeleted));
+            r0c1Value.Should().Be(nameof(ObjectWithList.IsDeleted));
             object r0c2Value = ((object[,])sheet.Cells.Value)[0, 2];
-            r0c2Value.Should().Be(nameof(ObjectWithTypedList.Name));
+            r0c2Value.Should().Be(nameof(ObjectWithList.Name));
             object r0c3Value = ((object[,])sheet.Cells.Value)[0, 3];
-            r0c3Value.Should().Be(nameof(ObjectWithTypedList.ObjGuid));
+            r0c3Value.Should().Be(nameof(ObjectWithList.GuidProp));
             object r0c4Value = ((object[,])sheet.Cells.Value)[0, 4];
-            r0c4Value.Should().Be(nameof(ObjectWithTypedList.Properties));
+            r0c4Value.Should().Be(nameof(ObjectWithList.Properties));
 
             object r1c0Value = ((object[,])sheet.Cells.Value)[1, 0];
             r1c0Value.Should().Be(entitiesForPage1[0].Id);
@@ -149,7 +199,7 @@ public class EntityReportGeneratorTests
             object r1c3Value = ((object[,])sheet.Cells.Value)[1, 3];
             bool guid1Parsed = Guid.TryParse(r1c3Value.ToString(), out Guid guid1value);
             guid1Parsed.Should().Be(true);
-            guid1value.Should().Be(entitiesForPage1[0].ObjGuid.ToString());
+            guid1value.Should().Be(entitiesForPage1[0].GuidProp.ToString());
             object r1c4Value = ((object[,])sheet.Cells.Value)[1, 4];
             //EPPlus заносит значение первого элемента коллекции
             r1c4Value.Should().Be(entitiesForPage1[0].Properties[0]);
@@ -163,7 +213,7 @@ public class EntityReportGeneratorTests
             object r2c3Value = ((object[,])sheet.Cells.Value)[2, 3];
             bool guid2Parsed = Guid.TryParse(r2c3Value.ToString(), out Guid guid2value);
             guid2Parsed.Should().Be(true);
-            guid2value.Should().Be(entitiesForPage1[1].ObjGuid.ToString());
+            guid2value.Should().Be(entitiesForPage1[1].GuidProp.ToString());
             object r2c4Value = ((object[,])sheet.Cells.Value)[2, 4];
             r2c4Value.Should().Be(entitiesForPage1[1].Properties[0]);
 
@@ -176,15 +226,15 @@ public class EntityReportGeneratorTests
             sheet2.Cells.Value.Should().NotBeNull();
 
             object s2r0c0Value = ((object[,])sheet2.Cells.Value)[0, 0];
-            s2r0c0Value.Should().Be(nameof(ObjectWithTypedList.Id));
+            s2r0c0Value.Should().Be(nameof(ObjectWithList.Id));
             object s2r0c1Value = ((object[,])sheet2.Cells.Value)[0, 1];
-            s2r0c1Value.Should().Be(nameof(ObjectWithTypedList.IsDeleted));
+            s2r0c1Value.Should().Be(nameof(ObjectWithList.IsDeleted));
             object s2r0c2Value = ((object[,])sheet2.Cells.Value)[0, 2];
-            s2r0c2Value.Should().Be(nameof(ObjectWithTypedList.Name));
+            s2r0c2Value.Should().Be(nameof(ObjectWithList.Name));
             object s2r0c3Value = ((object[,])sheet2.Cells.Value)[0, 3];
-            s2r0c3Value.Should().Be(nameof(ObjectWithTypedList.ObjGuid));
+            s2r0c3Value.Should().Be(nameof(ObjectWithList.GuidProp));
             object s2r0c4Value = ((object[,])sheet2.Cells.Value)[0, 4];
-            s2r0c4Value.Should().Be(nameof(ObjectWithTypedList.Properties));
+            s2r0c4Value.Should().Be(nameof(ObjectWithList.Properties));
 
             object s2r1c0Value = ((object[,])sheet2.Cells.Value)[1, 0];
             s2r1c0Value.Should().Be(entitiesForPage2[0].Id);
@@ -195,7 +245,7 @@ public class EntityReportGeneratorTests
             object s2r1c3Value = ((object[,])sheet2.Cells.Value)[1, 3];
             bool s2guid1Parsed = Guid.TryParse(s2r1c3Value.ToString(), out Guid s2guid1value);
             s2guid1Parsed.Should().Be(true);
-            s2guid1value.Should().Be(entitiesForPage2[0].ObjGuid.ToString());
+            s2guid1value.Should().Be(entitiesForPage2[0].GuidProp.ToString());
             object s2r1c4Value = ((object[,])sheet2.Cells.Value)[1, 4];
             //EPPlus заносит значение первого элемента коллекции
             s2r1c4Value.Should().Be(entitiesForPage2[0].Properties[0]);
@@ -209,7 +259,7 @@ public class EntityReportGeneratorTests
             object s2r2c3Value = ((object[,])sheet2.Cells.Value)[2, 3];
             bool s2guid2Parsed = Guid.TryParse(s2r2c3Value.ToString(), out Guid s2guid2value);
             s2guid2Parsed.Should().Be(true);
-            s2guid2value.Should().Be(entitiesForPage2[1].ObjGuid.ToString());
+            s2guid2value.Should().Be(entitiesForPage2[1].GuidProp.ToString());
             object s2r2c4Value = ((object[,])sheet2.Cells.Value)[2, 4];
             s2r2c4Value.Should().Be(entitiesForPage2[1].Properties[0]);
         }
@@ -356,7 +406,7 @@ public class EntityReportGeneratorTests
     public void EntityReportGenerator_GenerateExcelContentSuccessfully_FromDirect()
     {
         IEntityReportGenerator generator = GetReportGenerator();
-        List<ObjectWithTypedList> entities = GetTypedListEntities();
+        List<ObjectWithList> entities = GetListEntities();
 
         byte[]? content = null;
 
@@ -389,15 +439,15 @@ public class EntityReportGeneratorTests
             sheet.Cells.Value.Should().NotBeNull();
 
             object r0c0Value = ((object[,])sheet.Cells.Value)[0, 0];
-            r0c0Value.Should().Be(nameof(ObjectWithTypedList.Id));
+            r0c0Value.Should().Be(nameof(ObjectWithList.Id));
             object r0c1Value = ((object[,])sheet.Cells.Value)[0, 1];
-            r0c1Value.Should().Be(nameof(ObjectWithTypedList.IsDeleted));
+            r0c1Value.Should().Be(nameof(ObjectWithList.IsDeleted));
             object r0c2Value = ((object[,])sheet.Cells.Value)[0, 2];
-            r0c2Value.Should().Be(nameof(ObjectWithTypedList.Name));
+            r0c2Value.Should().Be(nameof(ObjectWithList.Name));
             object r0c3Value = ((object[,])sheet.Cells.Value)[0, 3];
-            r0c3Value.Should().Be(nameof(ObjectWithTypedList.ObjGuid));
+            r0c3Value.Should().Be(nameof(ObjectWithList.GuidProp));
             object r0c4Value = ((object[,])sheet.Cells.Value)[0, 4];
-            r0c4Value.Should().Be(nameof(ObjectWithTypedList.Properties));
+            r0c4Value.Should().Be(nameof(ObjectWithList.Properties));
 
             object r1c0Value = ((object[,])sheet.Cells.Value)[1, 0];
             r1c0Value.Should().Be(entities[0].Id);
@@ -408,7 +458,7 @@ public class EntityReportGeneratorTests
             object r1c3Value = ((object[,])sheet.Cells.Value)[1, 3];
             bool guid1Parsed = Guid.TryParse(r1c3Value.ToString(), out Guid guid1value);
             guid1Parsed.Should().Be(true);
-            guid1value.Should().Be(entities[0].ObjGuid!.ToString());
+            guid1value.Should().Be(entities[0].GuidProp!.ToString());
             object r1c4Value = ((object[,])sheet.Cells.Value)[1, 4];
             //EPPlus заносит значение первого элемента коллекции
             r1c4Value.Should().Be(entities[0]?.Properties[0]);
@@ -422,7 +472,7 @@ public class EntityReportGeneratorTests
             object r2c3Value = ((object[,])sheet.Cells.Value)[2, 3];
             bool guid2Parsed = Guid.TryParse(r2c3Value.ToString(), out Guid guid2value);
             guid2Parsed.Should().Be(true);
-            guid2value.Should().Be(entities[1].ObjGuid!.ToString());
+            guid2value.Should().Be(entities[1].GuidProp!.ToString());
             object r2c4Value = ((object[,])sheet.Cells.Value)[2, 4];
             r2c4Value.Should().Be(entities[1]?.Properties[0]);
         }
@@ -432,7 +482,7 @@ public class EntityReportGeneratorTests
     public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithNonNullableList()
     {
         IEntityReportGenerator generator = GetReportGenerator();
-        List<ObjectWithTypedList> objectList = GetTypedListEntities();
+        List<ObjectWithList> objectList = GetListEntities();
 
         string? content = null;
 
@@ -446,20 +496,20 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithTypedList.Id));
-        content.Should().Contain(nameof(ObjectWithTypedList.IsDeleted));
-        content.Should().Contain(nameof(ObjectWithTypedList.Name));
-        content.Should().Contain(nameof(ObjectWithTypedList.ObjGuid));
-        content.Should().Contain(nameof(ObjectWithTypedList.Properties));
+        content.Should().Contain(nameof(ObjectWithList.Id));
+        content.Should().Contain(nameof(ObjectWithList.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithList.Name));
+        content.Should().Contain(nameof(ObjectWithList.GuidProp));
+        content.Should().Contain(nameof(ObjectWithList.Properties));
         content.Should().Contain(objectList[0].Id.ToString());
         content.Should().Contain(objectList[1].Id.ToString());
         content.Should().Contain(objectList[0].IsDeleted.ToString());
         content.Should().Contain(objectList[1].IsDeleted.ToString());
         content.Should().Contain(objectList[0].Name);
         content.Should().Contain(objectList[1].Name);
-        content.Should().Contain(objectList[0].ObjGuid.ToString());
-        content.Should().Contain(objectList[1].ObjGuid.ToString());
-        content.Should().Contain(string.Join(",", objectList[0].Properties));
+        content.Should().Contain(objectList[0].GuidProp.ToString());
+        content.Should().Contain(objectList[1].GuidProp.ToString());
+        content.Should().Contain(objectList[0].Properties!.ToString()!.Replace("`", ""));
         content.Should().Contain(Environment.NewLine);
     }
 
@@ -467,7 +517,7 @@ public class EntityReportGeneratorTests
     public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithNullableList()
     {
         IEntityReportGenerator generator = GetReportGenerator();
-        List<ObjectWithGenericList> objectList = GetGenericListEntities();
+        List<ObjectWithNullableList> objectList = GetNullableListEntities();
 
         string? content = null;
 
@@ -481,20 +531,136 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithGenericList.Id));
-        content.Should().Contain(nameof(ObjectWithGenericList.IsDeleted));
-        content.Should().Contain(nameof(ObjectWithGenericList.Name));
-        content.Should().Contain(nameof(ObjectWithGenericList.ObjGuid));
-        content.Should().Contain(nameof(ObjectWithGenericList.Properties));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Id));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Name));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.GuidProp));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
         content.Should().Contain(objectList[0].Id.ToString());
         content.Should().Contain(objectList[1].Id.ToString());
         content.Should().Contain(objectList[0].IsDeleted.ToString());
         content.Should().Contain(objectList[1].IsDeleted.ToString());
         content.Should().Contain(objectList[0].Name);
         content.Should().Contain(objectList[1].Name);
-        content.Should().Contain(objectList[0].ObjGuid.ToString());
-        content.Should().Contain(objectList[1].ObjGuid.ToString());
+        content.Should().Contain(objectList[0].GuidProp.ToString());
+        content.Should().Contain(objectList[1].GuidProp.ToString());
         content.Should().Contain(objectList[0].Properties!.ToString()!.Replace("`", ""));
+        content.Should().Contain(Environment.NewLine);
+    }
+
+    [Fact]
+    public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithEnumerable()
+    {
+        IEntityReportGenerator generator = GetReportGenerator();
+        List<ObjectWithEnumerable> objectList = GetEnumerableEntities();
+
+        string? content = null;
+
+        Action execute = () =>
+        {
+            content = generator.GenerateCsvContent(objectList);
+        };
+
+        Exception ex = Record.Exception(execute);
+
+        ex.Should().BeNull();
+        content.Should().NotBeNull();
+        content.Should().Contain(CsvDelimiter);
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Id));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Name));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.GuidProp));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(objectList[0].Id.ToString());
+        content.Should().Contain(objectList[1].Id.ToString());
+        content.Should().Contain(objectList[0].IsDeleted.ToString());
+        content.Should().Contain(objectList[1].IsDeleted.ToString());
+        content.Should().Contain(objectList[0].Name);
+        content.Should().Contain(objectList[1].Name);
+        content.Should().Contain(objectList[0].GuidProp.ToString());
+        content.Should().Contain(objectList[1].GuidProp.ToString());
+        content.Should().Contain(objectList[0].Properties!.ToString()!.Replace("`", ""));
+        content.Should().Contain(Environment.NewLine);
+    }
+
+    [Fact]
+    public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithNullableEnumerable()
+    {
+        IEntityReportGenerator generator = GetReportGenerator();
+        List<ObjectWithNullableEnumerable> objectList = GetNullableEnumerableEntities();
+
+        string? content = null;
+
+        Action execute = () =>
+        {
+            content = generator.GenerateCsvContent(objectList);
+        };
+
+        Exception ex = Record.Exception(execute);
+
+        ex.Should().BeNull();
+        content.Should().NotBeNull();
+        content.Should().Contain(CsvDelimiter);
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Id));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Name));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.GuidProp));
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(objectList[0].Id.ToString());
+        content.Should().Contain(objectList[1].Id.ToString());
+        content.Should().Contain(objectList[0].IsDeleted.ToString());
+        content.Should().Contain(objectList[1].IsDeleted.ToString());
+        content.Should().Contain(objectList[0].Name);
+        content.Should().Contain(objectList[1].Name);
+        content.Should().Contain(objectList[0].GuidProp.ToString());
+        content.Should().Contain(objectList[1].GuidProp.ToString());
+        content.Should().Contain(objectList[0].Properties!.ToString()!.Replace("`", ""));
+        content.Should().Contain(Environment.NewLine);
+    }
+
+    [Fact]
+    public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithDetailedEnumerable()
+    {
+        IEntityReportGenerator generator = GetDetailedReportGenerator();
+        List<ObjectWithEnumerable> objectList = GetEnumerableEntities();
+
+        string? content = null;
+
+        Action execute = () =>
+        {
+            content = generator.GenerateCsvContent(objectList);
+        };
+
+        Exception ex = Record.Exception(execute);
+
+        ex.Should().BeNull();
+        content.Should().NotBeNull();
+        content.Should().Contain(CsvDelimiter);
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(string.Join(",", objectList[0].Properties!));
+        content.Should().Contain(Environment.NewLine);
+    }
+
+    [Fact]
+    public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithListAndDetailedEnumerable()
+    {
+        IEntityReportGenerator generator = GetDetailedReportGenerator();
+        List<ObjectWithList> objectList = GetListEntities();
+
+        string? content = null;
+
+        Action execute = () =>
+        {
+            content = generator.GenerateCsvContent(objectList);
+        };
+
+        Exception ex = Record.Exception(execute);
+
+        ex.Should().BeNull();
+        content.Should().NotBeNull();
+        content.Should().Contain(CsvDelimiter);
+        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(string.Join(",", objectList[0].Properties!));
         content.Should().Contain(Environment.NewLine);
     }
 }

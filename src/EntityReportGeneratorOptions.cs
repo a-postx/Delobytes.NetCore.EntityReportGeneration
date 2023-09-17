@@ -9,4 +9,8 @@ public class EntityReportGeneratorOptions
     /// Символ-разделитель для вывода в CSV. 
     /// </summary>
     public string CsvDelimiter { get; set; } = "U+002C";
+    /// <summary>
+    /// Признак необходимости подробного вывода перечислимых свойств. 
+    /// </summary>
+    public bool DetailedEnumerables { get; set; } = false;
 }

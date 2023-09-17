@@ -43,6 +43,11 @@
             Символ-разделитель для вывода в CSV. 
             </summary>
         </member>
+        <member name="P:Delobytes.NetCore.EntityReportGeneration.EntityReportGeneratorOptions.DetailedEnumerables">
+            <summary>
+            Признак необходимости подробного вывода перечислимых свойств. 
+            </summary>
+        </member>
         <member name="T:Delobytes.NetCore.EntityReportGeneration.EntityReportIgnoreAttribute">
             <summary>
             Атрибут показывает, что свойство должно быть проигнорировано.
