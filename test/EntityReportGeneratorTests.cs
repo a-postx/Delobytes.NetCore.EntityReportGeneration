@@ -120,6 +120,27 @@ public class EntityReportGeneratorTests
 
         return entitiesList;
     }
+
+    private List<ObjectWithEnumerable> Get100kEnumerableEntities()
+    {
+        List<ObjectWithEnumerable> entitiesList = new List<ObjectWithEnumerable>(99999);
+
+        for (int i = 0; i < 99999; i++)
+        {
+            string[] strings = new string[2];
+            strings.SetValue("string1 " + i, 0);
+            strings.SetValue("string2 " + i, 1);
+
+            ObjectWithEnumerable obj = new ObjectWithEnumerable
+            {
+                Id = i, Name = "Name " + i, IsDeleted = (i % 2) == 0, GuidProp = Guid.NewGuid(), Properties = strings
+            };
+
+            entitiesList.Add(obj);
+        }
+
+        return entitiesList;
+    }
     #endregion
 
 
@@ -531,11 +552,11 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Id));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.IsDeleted));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Name));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.GuidProp));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(nameof(ObjectWithNullableList.Id));
+        content.Should().Contain(nameof(ObjectWithNullableList.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithNullableList.Name));
+        content.Should().Contain(nameof(ObjectWithNullableList.GuidProp));
+        content.Should().Contain(nameof(ObjectWithNullableList.Properties));
         content.Should().Contain(objectList[0].Id.ToString());
         content.Should().Contain(objectList[1].Id.ToString());
         content.Should().Contain(objectList[0].IsDeleted.ToString());
@@ -566,11 +587,11 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Id));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.IsDeleted));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Name));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.GuidProp));
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(nameof(ObjectWithEnumerable.Id));
+        content.Should().Contain(nameof(ObjectWithEnumerable.IsDeleted));
+        content.Should().Contain(nameof(ObjectWithEnumerable.Name));
+        content.Should().Contain(nameof(ObjectWithEnumerable.GuidProp));
+        content.Should().Contain(nameof(ObjectWithEnumerable.Properties));
         content.Should().Contain(objectList[0].Id.ToString());
         content.Should().Contain(objectList[1].Id.ToString());
         content.Should().Contain(objectList[0].IsDeleted.ToString());
@@ -636,7 +657,7 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(nameof(ObjectWithEnumerable.Properties));
         content.Should().Contain(string.Join(",", objectList[0].Properties!));
         content.Should().Contain(Environment.NewLine);
     }
@@ -659,8 +680,35 @@ public class EntityReportGeneratorTests
         ex.Should().BeNull();
         content.Should().NotBeNull();
         content.Should().Contain(CsvDelimiter);
-        content.Should().Contain(nameof(ObjectWithNullableEnumerable.Properties));
+        content.Should().Contain(nameof(ObjectWithList.Properties));
         content.Should().Contain(string.Join(",", objectList[0].Properties!));
+        content.Should().Contain(Environment.NewLine);
+    }
+
+    [Fact]
+    public void EntityReportGenerator_GenerateCsvContentSuccessfully_WithALotOfEntities()
+    {
+        IEntityReportGenerator generator = GetReportGenerator();
+        List<ObjectWithEnumerable> objectList = Get100kEnumerableEntities();
+
+        string? content = null;
+
+        Action execute = () =>
+        {
+            content = generator.GenerateCsvContent(objectList);
+        };
+
+        Exception ex = Record.Exception(execute);
+
+        ex.Should().BeNull();
+        content.Should().NotBeNull();
+        content.Should().Contain(CsvDelimiter);
+        content.Should().Contain(objectList[0].Name);
+        content.Should().Contain(objectList[0].IsDeleted.ToString());
+        content.Should().Contain(objectList[0].Name);
+        content.Should().Contain(objectList[0].GuidProp.ToString());
+        content.Should().Contain(objectList[0].Properties!.ToString()!.Replace("`", ""));
+        content.Should().Contain(nameof(ObjectWithEnumerable.Properties));
         content.Should().Contain(Environment.NewLine);
     }
 }

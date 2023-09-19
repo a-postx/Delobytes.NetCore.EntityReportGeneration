@@ -157,6 +157,7 @@ public class EntityReportGenerator : IEntityReportGenerator
         items = items ?? throw new ArgumentNullException(nameof(items));
 
         DataTable result = new DataTable(tableName);
+        StringBuilder sb = new StringBuilder();
 
         try
         {
@@ -177,44 +178,42 @@ public class EntityReportGenerator : IEntityReportGenerator
 
                 for (int i = 0; i < properties.Length; i++)
                 {
-                    object? columnValue;
+                    object? value = properties[i].GetValue(item, null);
 
-                    Type[]? interfaces = properties[i].PropertyType.GetInterfaces();
-
-                    if (interfaces.Contains(typeof(IEnumerable))
-                        && properties[i].PropertyType.Name != "String"
-                        && _options.DetailedEnumerables)
+                    if (properties[i].PropertyType == typeof(bool)
+                        || properties[i].PropertyType == typeof(int)
+                        || properties[i].PropertyType == typeof(string)
+                        || properties[i].PropertyType == typeof(Guid))
                     {
-                        object? value = properties[i].GetValue(item, null);
+                        dataRow[i] = ConvertToString(value, stringToCleanup);
+                        continue;
+                    }
 
-                        StringBuilder sb = value is IList list ? new StringBuilder(list.Count) : new StringBuilder();
+                    if (_options.DetailedEnumerables && value is IEnumerable enumerable)
+                    {
+                        sb.Clear();
                         bool firstElement = true;
 
-                        if (properties[i].GetValue(item, null) is IEnumerable enumerable)
+                        foreach (object element in enumerable)
                         {
-                            foreach (object element in enumerable)
+                            if (firstElement)
                             {
-                                if (firstElement)
-                                {
-                                    sb.Append(element.ToString());
-                                    firstElement = false;
-                                }
-                                else
-                                {
-                                    sb.Append(',');
-                                    sb.Append(element);
-                                }
+                                firstElement = false;
                             }
+                            else
+                            {
+                                sb.Append(',');
+                            }
+
+                            sb.Append(element.ToString());
                         }
 
-                        columnValue = sb.ToString();
+                        dataRow[i] = ConvertToString(sb.ToString(), stringToCleanup);
                     }
                     else
                     {
-                        columnValue = properties[i].GetValue(item, null);
+                        dataRow[i] = ConvertToString(value, stringToCleanup);
                     }
-
-                    dataRow[i] = ConvertToString(columnValue, stringToCleanup);
                 }
 
                 result.Rows.Add(dataRow);
